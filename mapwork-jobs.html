@@ -182,6 +182,36 @@
     display: flex; align-items: center; gap: 8px;
     margin-left: auto; flex-shrink: 0;
   }
+  .header-action-wrap { position:relative; }
+  .header-icon-btn {
+    width:36px; height:36px; display:flex; align-items:center; justify-content:center;
+    border:1px solid var(--border); border-radius:var(--radius-md); background:var(--surface2);
+    color:var(--text2); cursor:pointer; transition:background .15s,color .15s,border-color .15s;
+  }
+  .header-icon-btn:hover, .header-icon-btn.active { background:var(--surface3); color:var(--text); border-color:var(--border2); }
+  .header-icon-btn svg { width:17px; height:17px; }
+  .icon-badge {
+    position:absolute; top:-4px; right:-4px; min-width:17px; height:17px; padding:0 4px;
+    display:flex; align-items:center; justify-content:center; border-radius:9px;
+    background:var(--pink); color:white; font-size:9px; font-weight:700; border:2px solid var(--surface);
+  }
+  .header-menu {
+    display:none; position:absolute; top:44px; right:0; width:240px; z-index:2000;
+    background:var(--surface); border:1px solid var(--border2); border-radius:var(--radius-lg);
+    box-shadow:0 18px 48px rgba(0,0,0,.6); padding:8px;
+  }
+  .header-menu.open { display:block; animation:menuIn .15s ease-out; }
+  @keyframes menuIn { from { opacity:0; transform:translateY(-5px); } to { opacity:1; transform:translateY(0); } }
+  .menu-heading { padding:7px 9px 9px; color:var(--text3); font-size:10px; font-weight:700; letter-spacing:.8px; text-transform:uppercase; }
+  .menu-item {
+    width:100%; display:flex; align-items:center; gap:10px; padding:9px 10px;
+    border:0; border-radius:var(--radius-sm); background:transparent; color:var(--text2);
+    font-family:var(--font-body); font-size:13px; text-align:left; cursor:pointer;
+  }
+  .menu-item:hover { background:var(--surface2); color:var(--text); }
+  .menu-item svg { width:15px; height:15px; flex-shrink:0; }
+  .menu-divider { height:1px; background:var(--border); margin:5px 2px; }
+  .menu-note { padding:9px 10px; color:var(--text2); font-size:12px; line-height:1.45; }
   .count-badge {
     font-size: 12px; color: var(--text2);
     background: var(--surface2);
@@ -222,6 +252,22 @@
     background: var(--bg);
   }
 
+  /* Job list tabs */
+  #jobs-tabs { display:flex; gap:4px; padding:10px 14px 0; background:var(--surface); }
+  .jobs-tab {
+    flex:1; border:0; border-bottom:2px solid transparent; background:transparent;
+    color:var(--text2); padding:8px 10px 9px; font-family:var(--font-body);
+    font-size:13px; font-weight:500; cursor:pointer;
+  }
+  .jobs-tab:hover { color:var(--text); }
+  .jobs-tab.active { color:var(--accent); border-bottom-color:var(--accent); }
+  #saved-count {
+    display:inline-flex; align-items:center; justify-content:center; min-width:18px;
+    height:18px; margin-left:4px; padding:0 5px; border-radius:10px;
+    background:var(--surface3); font-size:10px;
+  }
+  .jobs-tab.active #saved-count { background:var(--accent-dim); }
+
   /* Filter chips */
   #chips-bar {
     padding: 10px 14px;
@@ -247,6 +293,11 @@
     border-color: var(--accent);
     color: var(--accent);
     font-weight: 500;
+  }
+  .industry-filter {
+    width:100%; margin-top:4px; background:var(--surface2); border:1px solid var(--border);
+    color:var(--text2); border-radius:var(--radius-sm); padding:7px 9px;
+    font-family:var(--font-body); font-size:12px; outline:none;
   }
 
   /* Sort bar */
@@ -526,6 +577,34 @@
   }
   .stat-dot { width: 6px; height: 6px; border-radius: 50%; }
 
+  /* Map style switcher */
+  #map-style-control {
+    position: absolute;
+    top: 12px; left: 12px;
+    z-index: 999;
+    display: flex;
+    gap: 3px;
+    padding: 4px;
+    background: var(--surface);
+    border: 1px solid var(--border);
+    border-radius: var(--radius-md);
+    box-shadow: 0 4px 12px rgba(0,0,0,0.4);
+  }
+  .map-style-btn {
+    border: 0;
+    background: transparent;
+    color: var(--text2);
+    border-radius: var(--radius-sm);
+    padding: 6px 10px;
+    font-family: var(--font-body);
+    font-size: 11px;
+    font-weight: 500;
+    cursor: pointer;
+    transition: background 0.15s, color 0.15s;
+  }
+  .map-style-btn:hover { background: var(--surface2); color: var(--text); }
+  .map-style-btn.active { background: var(--accent); color: #fff; }
+
   /* Detail panel (slide in) */
   #detail-panel {
     position: absolute;
@@ -702,6 +781,45 @@
     <div class="header-right">
       <span class="count-badge" id="countBadge">24 jobs</span>
       <button class="btn-primary" onclick="applyNow(null)">Post a Job</button>
+
+      <div class="header-action-wrap">
+        <button class="header-icon-btn" aria-label="Notifications" title="Notifications" onclick="toggleHeaderMenu('notifications-menu', this)">
+          <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M18 8a6 6 0 0 0-12 0c0 7-3 7-3 9h18c0-2-3-2-3-9"/><path d="M10 21h4"/></svg>
+        </button>
+        <span class="icon-badge">3</span>
+        <div class="header-menu" id="notifications-menu">
+          <div class="menu-heading">Notifications</div>
+          <div class="menu-note">3 new jobs match your saved searches.</div>
+          <button class="menu-item" onclick="showToast('Notifications marked as read.', '#22d67a')">Mark all as read</button>
+        </div>
+      </div>
+
+      <div class="header-action-wrap">
+        <button class="header-icon-btn" aria-label="Messages" title="Messages" onclick="toggleHeaderMenu('messages-menu', this)">
+          <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M21 15a4 4 0 0 1-4 4H8l-5 3V7a4 4 0 0 1 4-4h10a4 4 0 0 1 4 4z"/></svg>
+        </button>
+        <span class="icon-badge" style="background:var(--accent);">2</span>
+        <div class="header-menu" id="messages-menu">
+          <div class="menu-heading">Messages</div>
+          <div class="menu-note">You have 2 unread recruiter messages.</div>
+          <button class="menu-item" onclick="showToast('Opening messages…', '#7c6fff')">View all messages</button>
+        </div>
+      </div>
+
+      <div class="header-action-wrap">
+        <button class="header-icon-btn" aria-label="Account" title="Account" onclick="toggleHeaderMenu('account-menu', this)">
+          <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><circle cx="12" cy="8" r="4"/><path d="M4 21a8 8 0 0 1 16 0"/></svg>
+        </button>
+        <div class="header-menu" id="account-menu">
+          <div class="menu-heading">Account</div>
+          <button class="menu-item" onclick="menuAction('Profile')"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><circle cx="12" cy="8" r="4"/><path d="M4 21a8 8 0 0 1 16 0"/></svg>Profile</button>
+          <button class="menu-item" onclick="menuAction('Settings')"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><circle cx="12" cy="12" r="3"/><path d="M19.4 15a1.7 1.7 0 0 0 .3 1.9l.1.1-2.8 2.8-.1-.1a1.7 1.7 0 0 0-1.9-.3 1.7 1.7 0 0 0-1 1.6V21h-4v-.1A1.7 1.7 0 0 0 9 19.4a1.7 1.7 0 0 0-1.9.3l-.1.1L4.2 17l.1-.1a1.7 1.7 0 0 0 .3-1.9A1.7 1.7 0 0 0 3 14H3v-4h.1A1.7 1.7 0 0 0 4.6 9a1.7 1.7 0 0 0-.3-1.9L4.2 7 7 4.2l.1.1A1.7 1.7 0 0 0 9 4.6 1.7 1.7 0 0 0 10 3V3h4v.1A1.7 1.7 0 0 0 15 4.6a1.7 1.7 0 0 0 1.9-.3l.1-.1L19.8 7l-.1.1a1.7 1.7 0 0 0-.3 1.9 1.7 1.7 0 0 0 1.6 1H21v4h-.1a1.7 1.7 0 0 0-1.5 1z"/></svg>Settings</button>
+          <button class="menu-item" onclick="menuAction('Help Center')"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><circle cx="12" cy="12" r="10"/><path d="M9.5 9a2.5 2.5 0 1 1 4.2 1.8c-1 .8-1.7 1.2-1.7 2.7"/><path d="M12 17h.01"/></svg>Help</button>
+          <button class="menu-item" onclick="menuAction('Language')"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><circle cx="12" cy="12" r="10"/><path d="M2 12h20M12 2a15 15 0 0 1 0 20M12 2a15 15 0 0 0 0 20"/></svg>Language <span style="margin-left:auto;color:var(--text3);">English</span></button>
+          <div class="menu-divider"></div>
+          <button class="menu-item" onclick="menuAction('Sign out')">Sign out</button>
+        </div>
+      </div>
     </div>
   </header>
 
@@ -711,15 +829,29 @@
     <!-- ── Sidebar ── -->
     <div id="sidebar">
 
+      <div id="jobs-tabs" role="tablist" aria-label="Job lists">
+        <button class="jobs-tab active" role="tab" aria-selected="true" data-view="all" onclick="setJobsView('all')">All Jobs</button>
+        <button class="jobs-tab" role="tab" aria-selected="false" data-view="saved" onclick="setJobsView('saved')">Saved Jobs <span id="saved-count">0</span></button>
+      </div>
+
       <!-- Filter chips -->
       <div id="chips-bar">
         <button class="chip active" onclick="setChip(this,'all')">All</button>
         <button class="chip" onclick="setChip(this,'remote')">Remote</button>
+        <button class="chip" onclick="setChip(this,'hybrid')">Hybrid</button>
         <button class="chip" onclick="setChip(this,'engineering')">Engineering</button>
         <button class="chip" onclick="setChip(this,'design')">Design</button>
         <button class="chip" onclick="setChip(this,'data')">Data</button>
         <button class="chip" onclick="setChip(this,'product')">Product</button>
         <button class="chip" onclick="setChip(this,'internship')">Internship</button>
+        <select class="industry-filter" id="industryFilter" onchange="render()" aria-label="Industry">
+          <option value="all">All industries</option>
+          <option>Tech</option><option>Healthcare</option><option>Education</option><option>Accounting</option>
+          <option>Pharmaceutical</option><option>Finance</option><option>Engineering</option><option>Real Estate</option>
+          <option>Higher Education</option><option>Sales</option><option>Government</option><option>Energy</option>
+          <option>Retail</option><option>Manufacturing</option><option>Architecture</option><option>Human Resources</option>
+          <option>Nonprofit</option><option>Transportation</option><option>Hospitality</option>
+        </select>
       </div>
 
       <!-- Sort -->
@@ -736,14 +868,21 @@
       <div id="cards-list"></div>
       <div id="no-results">
         <svg width="36" height="36" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.5" stroke-linecap="round" stroke-linejoin="round" style="color:var(--text3);margin:0 auto 8px;display:block;"><circle cx="11" cy="11" r="8"/><line x1="21" y1="21" x2="16.65" y2="16.65"/></svg>
-        <p>No jobs match your filters.</p>
-        <p style="margin-top:4px;font-size:12px;">Try adjusting your search.</p>
+        <p id="no-results-title">No jobs match your filters.</p>
+        <p id="no-results-help" style="margin-top:4px;font-size:12px;">Try adjusting your search.</p>
       </div>
     </div>
 
     <!-- ── Map ── -->
     <div id="map-wrap">
       <div id="map"></div>
+
+      <!-- Map style -->
+      <div id="map-style-control" role="group" aria-label="Map style">
+        <button class="map-style-btn active" data-style="dark" onclick="setMapStyle('dark')">Dark</button>
+        <button class="map-style-btn" data-style="light" onclick="setMapStyle('light')">Light</button>
+        <button class="map-style-btn" data-style="satellite" onclick="setMapStyle('satellite')">Satellite</button>
+      </div>
 
       <!-- Stats -->
       <div id="map-stats">
@@ -831,7 +970,95 @@ const JOBS = [
   { id:22, title:"AI/ML Intern",               company:"Applied Intuition", city:"SF",  type:"internship", tags:["data","engineering"],           salary:"$45–55/hr", salaryN:50,  tier:"intern", logo:"A", color:"#7c3aed", lat:37.7850, lng:-122.4350, remote:false, posted:1,  desc:"Work on ML systems for autonomous vehicles at one of the fastest-growing startups. Build perception models, simulation tools, and evaluation pipelines.", reqs:"Strong ML fundamentals, Python, PyTorch, computer vision a plus, pursuing BS/MS in CS." },
   { id:23, title:"Content Strategist",         company:"HubSpot",          city:"NYC", type:"full-time",  tags:["product","remote"],             salary:"$80–100k",  salaryN:90,  tier:"low",    logo:"H", color:"#ff7a59", lat:40.7282, lng:-73.7949, remote:true,  posted:4,  desc:"Own HubSpot's content strategy for mid-market customers. Write, edit, and distribute content that drives inbound leads and product adoption.", reqs:"3+ years content marketing, SEO, data-driven writing, B2B SaaS experience preferred." },
   { id:24, title:"Site Reliability Engineer",  company:"Meta",             city:"NYC", type:"full-time",  tags:["engineering"],                  salary:"$180–220k", salaryN:200, tier:"high",   logo:"M", color:"#0866ff", lat:40.6970, lng:-73.9450, remote:false, posted:2,  desc:"Keep Meta's infrastructure—Instagram, WhatsApp, Facebook—running at planetary scale. Work on oncall systems, capacity planning, and reliability tooling.", reqs:"SRE/DevOps background, Linux expertise, Python/Go, experience with billion-user systems." },
+  { id:25, title:"Clinical Operations Coordinator", company:"Northstar Health", city:"CHI", type:"full-time", tags:["healthcare"], industry:"Healthcare", workMode:"hybrid", source:"Healthcare careers", salary:"$62–78k", salaryN:70, tier:"low", logo:"N", color:"#16a085", lat:41.892, lng:-87.635, remote:false, posted:2, desc:"Coordinate multidisciplinary clinical programs and improve patient operations across several outpatient locations.", reqs:"Healthcare operations experience, strong communication, scheduling and reporting skills." },
+  { id:26, title:"High School Science Teacher", company:"Metro Public Schools", city:"DEN", type:"full-time", tags:["education"], industry:"Education", workMode:"on-site", source:"Public sector feed", salary:"$58–76k", salaryN:67, tier:"low", logo:"M", color:"#3498db", lat:39.750, lng:-104.985, remote:false, posted:4, desc:"Teach inquiry-based science and collaborate with a supportive grade-level team.", reqs:"Teaching credential or eligibility, science degree, classroom management skills." },
+  { id:27, title:"Senior Staff Accountant", company:"Ledger & Co.", city:"NYC", type:"full-time", tags:["accounting","finance"], industry:"Accounting", workMode:"hybrid", source:"Company careers", salary:"$82–104k", salaryN:93, tier:"low", logo:"L", color:"#2c3e50", lat:40.735, lng:-73.990, remote:false, posted:3, desc:"Own month-end close, reconciliations, and financial reporting for a growing professional services firm.", reqs:"CPA preferred, GAAP, Excel, ERP experience, 4+ years accounting." },
+  { id:28, title:"Quality Assurance Specialist", company:"Nova Therapeutics", city:"SAC", type:"full-time", tags:["pharmaceutical","quality"], industry:"Pharmaceutical", workMode:"on-site", source:"Life sciences careers", salary:"$88–112k", salaryN:100, tier:"mid", logo:"N", color:"#8e44ad", lat:38.598, lng:-121.470, remote:false, posted:5, desc:"Support GMP quality systems, audits, deviations, and continuous improvement for clinical manufacturing.", reqs:"GMP experience, life sciences degree, CAPA and documentation knowledge." },
+  { id:29, title:"Financial Planning Analyst", company:"Civic Bank", city:"SF", type:"full-time", tags:["finance"], industry:"Finance", workMode:"hybrid", source:"Company careers", salary:"$105–132k", salaryN:118, tier:"mid", logo:"C", color:"#1abc9c", lat:37.792, lng:-122.402, remote:false, posted:2, desc:"Build forecasts, analyze performance, and partner with business leaders on investment decisions.", reqs:"Financial modeling, Excel, SQL or BI tools, 3+ years FP&A experience." },
+  { id:30, title:"Commercial Project Engineer", company:"Cobalt Engineering", city:"AUS", type:"full-time", tags:["engineering","construction"], industry:"Engineering", workMode:"on-site", source:"Company careers", salary:"$92–118k", salaryN:105, tier:"mid", logo:"C", color:"#e67e22", lat:30.280, lng:-97.735, remote:false, posted:6, desc:"Coordinate design, field teams, schedules, and budgets for complex commercial infrastructure projects.", reqs:"Engineering degree, project controls, construction documentation, PE track preferred." },
+  { id:31, title:"Commercial Property Manager", company:"Urban Key Realty", city:"LA", type:"full-time", tags:["real-estate","operations"], industry:"Real Estate", workMode:"hybrid", source:"Real estate careers", salary:"$78–98k", salaryN:88, tier:"low", logo:"U", color:"#d35400", lat:34.045, lng:-118.260, remote:false, posted:3, desc:"Manage a portfolio of commercial properties, tenant relationships, vendors, and operating budgets.", reqs:"Property management experience, budgeting, vendor management, real estate license a plus." },
+  { id:32, title:"Academic Program Manager", company:"Pacific City University", city:"SEA", type:"full-time", tags:["higher-education","operations"], industry:"Higher Education", workMode:"hybrid", source:"Higher education feed", salary:"$72–90k", salaryN:81, tier:"low", logo:"P", color:"#5b4b8a", lat:47.655, lng:-122.310, remote:false, posted:1, desc:"Lead student programming, curriculum operations, faculty coordination, and program assessment.", reqs:"Higher education experience, program management, assessment and student services knowledge." },
+  { id:33, title:"Enterprise Account Executive", company:"Summit Systems", city:"DEN", type:"full-time", tags:["sales","tech"], industry:"Sales", workMode:"hybrid", source:"Company careers", salary:"$120–190k OTE", salaryN:155, tier:"high", logo:"S", color:"#27ae60", lat:39.742, lng:-104.997, remote:false, posted:2, desc:"Build strategic relationships and grow enterprise accounts across the western region.", reqs:"5+ years B2B sales, complex deal cycles, CRM discipline, strong executive communication." },
+  { id:34, title:"Community Development Analyst", company:"City Services Agency", city:"SAC", type:"full-time", tags:["government","policy"], industry:"Government", workMode:"hybrid", source:"Public sector feed", salary:"$76–96k", salaryN:86, tier:"low", logo:"C", color:"#34495e", lat:38.576, lng:-121.490, remote:false, posted:4, desc:"Analyze community programs, grants, outcomes, and policy options for city leadership.", reqs:"Public administration or policy background, data analysis, grant reporting, community engagement." },
+  { id:35, title:"Renewable Energy Analyst", company:"SunGrid Energy", city:"AUS", type:"full-time", tags:["energy","finance"], industry:"Energy", workMode:"hybrid", source:"Climate careers", salary:"$96–124k", salaryN:110, tier:"mid", logo:"S", color:"#f39c12", lat:30.255, lng:-97.750, remote:false, posted:1, desc:"Evaluate renewable projects, market trends, and commercial performance across solar and storage portfolios.", reqs:"Energy markets, financial modeling, Excel/Python, strong written analysis." },
+  { id:36, title:"Regional Store Manager", company:"Harbor Retail Group", city:"SEA", type:"full-time", tags:["retail","operations"], industry:"Retail", workMode:"on-site", source:"Retail careers", salary:"$84–108k", salaryN:96, tier:"low", logo:"H", color:"#c0392b", lat:47.610, lng:-122.337, remote:false, posted:5, desc:"Lead store performance, talent development, merchandising, and customer experience across the region.", reqs:"Multi-unit retail leadership, P&L ownership, coaching and workforce planning." },
+  { id:37, title:"Production Planner", company:"ForgeWorks", city:"CHI", type:"full-time", tags:["manufacturing","operations"], industry:"Manufacturing", workMode:"on-site", source:"Manufacturing careers", salary:"$70–92k", salaryN:81, tier:"low", logo:"F", color:"#7f8c8d", lat:41.870, lng:-87.650, remote:false, posted:3, desc:"Plan production schedules, materials, capacity, and cross-functional execution for a modern manufacturing site.", reqs:"MRP/ERP, supply planning, Excel, lean manufacturing knowledge." },
+  { id:38, title:"Project Architect", company:"Studio North", city:"SF", type:"full-time", tags:["architecture","design"], industry:"Architecture", workMode:"hybrid", source:"Design careers", salary:"$105–138k", salaryN:121, tier:"mid", logo:"S", color:"#9b59b6", lat:37.781, lng:-122.415, remote:false, posted:6, desc:"Lead design development and documentation for mixed-use and civic projects.", reqs:"Architecture license preferred, Revit, consultant coordination, 6+ years experience." },
+  { id:39, title:"People Operations Partner", company:"BrightPath", city:"NYC", type:"full-time", tags:["human-resources","operations"], industry:"Human Resources", workMode:"hybrid", source:"Company careers", salary:"$98–126k", salaryN:112, tier:"mid", logo:"B", color:"#e84393", lat:40.724, lng:-74.010, remote:false, posted:2, desc:"Partner with leaders on talent programs, employee relations, organizational planning, and culture.", reqs:"HRBP or people operations experience, employment practices, coaching, analytics." },
+  { id:40, title:"Development Manager", company:"Community Food Alliance", city:"LA", type:"full-time", tags:["nonprofit","fundraising"], industry:"Nonprofit", workMode:"hybrid", source:"Nonprofit feed", salary:"$74–94k", salaryN:84, tier:"low", logo:"C", color:"#00b894", lat:34.065, lng:-118.305, remote:false, posted:4, desc:"Grow individual giving, grants, events, and donor stewardship for a regional food access nonprofit.", reqs:"Fundraising, donor communications, grant writing, mission-driven collaboration." },
+  { id:41, title:"Transit Operations Supervisor", company:"MetroLink Transit", city:"CHI", type:"full-time", tags:["transportation","operations"], industry:"Transportation", workMode:"on-site", source:"Public sector feed", salary:"$80–103k", salaryN:91, tier:"low", logo:"M", color:"#0984e3", lat:41.885, lng:-87.625, remote:false, posted:1, desc:"Supervise daily transit service, frontline teams, incident response, and performance improvement.", reqs:"Transportation operations, shift leadership, safety procedures, union environment experience." },
+  { id:42, title:"Hotel Revenue Manager", company:"Crescent Hotels", city:"LA", type:"full-time", tags:["hospitality","finance"], industry:"Hospitality", workMode:"hybrid", source:"Hospitality careers", salary:"$86–112k", salaryN:99, tier:"low", logo:"C", color:"#6c5ce7", lat:34.057, lng:-118.245, remote:false, posted:3, desc:"Optimize pricing, forecasting, inventory, and channel strategy across a portfolio of hotels.", reqs:"Hotel revenue management, forecasting, RMS tools, strong commercial judgment." },
+  { id:43, title:"Customer Success Manager", company:"Orbit Software", city:"DEN", type:"full-time", tags:["tech","sales"], industry:"Tech", workMode:"remote", source:"Remote jobs feed", salary:"$92–120k", salaryN:106, tier:"mid", logo:"O", color:"#6c5ce7", lat:39.739, lng:-104.990, remote:true, posted:2, desc:"Guide mid-market customers from onboarding through expansion and long-term adoption.", reqs:"SaaS customer success, executive communication, renewal strategy, CRM experience." },
 ];
+
+// Demo listings centered on every U.S. state capital so nationwide coverage is visible.
+const STATE_CAPITALS = [
+  ['AL','Montgomery',32.3777,-86.3006],['AK','Juneau',58.3019,-134.4197],['AZ','Phoenix',33.4484,-112.0740],
+  ['AR','Little Rock',34.7465,-92.2896],['CA','Sacramento',38.5816,-121.4944],['CO','Denver',39.7392,-104.9903],
+  ['CT','Hartford',41.7658,-72.6734],['DE','Dover',39.1582,-75.5244],['FL','Tallahassee',30.4383,-84.2807],
+  ['GA','Atlanta',33.7490,-84.3880],['HI','Honolulu',21.3099,-157.8581],['ID','Boise',43.6150,-116.2023],
+  ['IL','Springfield',39.7817,-89.6501],['IN','Indianapolis',39.7684,-86.1581],['IA','Des Moines',41.5868,-93.6250],
+  ['KS','Topeka',39.0473,-95.6752],['KY','Frankfort',38.2009,-84.8777],['LA','Baton Rouge',30.4515,-91.1871],
+  ['ME','Augusta',44.3106,-69.7795],['MD','Annapolis',38.9784,-76.4922],['MA','Boston',42.3601,-71.0589],
+  ['MI','Lansing',42.7325,-84.5555],['MN','Saint Paul',44.9537,-93.0900],['MS','Jackson',32.2988,-90.1848],
+  ['MO','Jefferson City',38.5767,-92.1735],['MT','Helena',46.5891,-112.0391],['NE','Lincoln',40.8136,-96.7026],
+  ['NV','Carson City',39.1638,-119.7674],['NH','Concord',43.2081,-71.5376],['NJ','Trenton',40.2171,-74.7429],
+  ['NM','Santa Fe',35.6870,-105.9378],['NY','Albany',42.6526,-73.7562],['NC','Raleigh',35.7796,-78.6382],
+  ['ND','Bismarck',46.8083,-100.7837],['OH','Columbus',39.9612,-82.9988],['OK','Oklahoma City',35.4676,-97.5164],
+  ['OR','Salem',44.9429,-123.0351],['PA','Harrisburg',40.2732,-76.8867],['RI','Providence',41.8240,-71.4128],
+  ['SC','Columbia',34.0007,-81.0348],['SD','Pierre',44.3683,-100.3510],['TN','Nashville',36.1627,-86.7816],
+  ['TX','Austin',30.2672,-97.7431],['UT','Salt Lake City',40.7608,-111.8910],['VT','Montpelier',44.2601,-72.5754],
+  ['VA','Richmond',37.5407,-77.4360],['WA','Olympia',47.0379,-122.9007],['WV','Charleston',38.3498,-81.6326],
+  ['WI','Madison',43.0731,-89.4012],['WY','Cheyenne',41.1400,-104.8202]
+];
+
+const CAPITAL_ROLES = [
+  ['Program Analyst','Government'], ['Healthcare Coordinator','Healthcare'], ['Accountant','Accounting'],
+  ['Education Program Specialist','Education'], ['Energy Project Coordinator','Energy'],
+  ['Business Development Manager','Sales'], ['Transportation Planner','Transportation'],
+  ['Human Resources Generalist','Human Resources'], ['Facilities Project Manager','Engineering'],
+  ['Community Partnerships Manager','Nonprofit']
+];
+
+const STATE_NAMES = {
+  AL:'State of Alabama', AK:'State of Alaska', AZ:'State of Arizona', AR:'State of Arkansas', CA:'State of California',
+  CO:'State of Colorado', CT:'State of Connecticut', DE:'State of Delaware', FL:'State of Florida', GA:'State of Georgia',
+  HI:'State of Hawaii', ID:'State of Idaho', IL:'State of Illinois', IN:'State of Indiana', IA:'State of Iowa',
+  KS:'State of Kansas', KY:'Commonwealth of Kentucky', LA:'State of Louisiana', ME:'State of Maine', MD:'State of Maryland',
+  MA:'Commonwealth of Massachusetts', MI:'State of Michigan', MN:'State of Minnesota', MS:'State of Mississippi', MO:'State of Missouri',
+  MT:'State of Montana', NE:'State of Nebraska', NV:'State of Nevada', NH:'State of New Hampshire', NJ:'State of New Jersey',
+  NM:'State of New Mexico', NY:'State of New York', NC:'State of North Carolina', ND:'State of North Dakota', OH:'State of Ohio',
+  OK:'State of Oklahoma', OR:'State of Oregon', PA:'Commonwealth of Pennsylvania', RI:'State of Rhode Island', SC:'State of South Carolina',
+  SD:'State of South Dakota', TN:'State of Tennessee', TX:'State of Texas', UT:'State of Utah', VT:'State of Vermont',
+  VA:'Commonwealth of Virginia', WA:'State of Washington', WV:'State of West Virginia', WI:'State of Wisconsin', WY:'State of Wyoming'
+};
+
+STATE_CAPITALS.forEach(([state, capital, lat, lng], index) => {
+  const [title, industry] = CAPITAL_ROLES[index % CAPITAL_ROLES.length];
+  JOBS.push({
+    id: 100 + index, title, company: STATE_NAMES[state], city: state, state,
+    location: `${capital}, ${state}`, type:'full-time', tags:[industry.toLowerCase().replaceAll(' ','-')],
+    industry, workMode: index % 3 === 0 ? 'hybrid' : 'on-site', source:'State capital demo feed',
+    salary:'$65–105k', salaryN:85, tier:'low', logo:state[0], color:'#4f8cff', lat, lng,
+    remote:false, posted:(index % 7) + 1,
+    desc:`Demo opportunity representing employers in the ${capital} metropolitan area.`,
+    reqs:'Relevant professional experience, strong communication, and local market knowledge.'
+  });
+});
+
+JOBS.forEach(job => {
+  job.industry = job.industry || (job.company === 'Sutter Health' ? 'Healthcare' : job.company === 'Sac State (CSUS)' ? 'Higher Education' : 'Tech');
+  job.workMode = job.workMode || (job.remote ? 'remote' : 'on-site');
+  job.source = job.source || 'Company careers';
+  const legacyStates = {SF:'CA',LA:'CA',SAC:'CA',SEA:'WA',NYC:'NY',DEN:'CO',AUS:'TX',CHI:'IL'};
+  job.state = job.state || legacyStates[job.city];
+  job.location = job.location || job.city;
+});
+
+const stateFilter = document.getElementById('cityFilter');
+stateFilter.innerHTML = '<option value="all">All States</option>' + STATE_CAPITALS
+  .map(([state, capital]) => `<option value="${state}">${state} — ${capital}</option>`)
+  .join('');
 
 const TIER_COLOR = { high:'#22d67a', mid:'#7c6fff', low:'#ffb340', intern:'#ff6b9d' };
 const CITY_COORDS = {
@@ -850,6 +1077,11 @@ const CITY_COORDS = {
 // ═══════════════════════════════════════════════
 let selectedId   = null;
 let activeChip   = 'all';
+let activeJobsView = 'all';
+let savedJobIds = new Set();
+try {
+  savedJobIds = new Set(JSON.parse(localStorage.getItem('mapwork-saved-jobs') || '[]'));
+} catch (_) {}
 let markers      = {};  // id → L.marker
 
 // ═══════════════════════════════════════════════
@@ -864,12 +1096,29 @@ const map = L.map('map', {
 
 L.control.zoom({ position: 'bottomleft' }).addTo(map);
 
-// Dark tile layer (CartoDB Dark Matter)
-L.tileLayer('https://{s}.basemaps.cartocdn.com/dark_all/{z}/{x}/{y}{r}.png', {
-  attribution: '&copy; <a href="https://www.openstreetmap.org/copyright">OpenStreetMap</a> contributors &copy; <a href="https://carto.com/">CARTO</a>',
-  subdomains: 'abcd',
-  maxZoom: 19,
-}).addTo(map);
+const mapLayers = {
+  dark: L.tileLayer('https://server.arcgisonline.com/ArcGIS/rest/services/Canvas/World_Dark_Gray_Base/MapServer/tile/{z}/{y}/{x}', {
+    attribution: 'Tiles &copy; Esri', maxZoom: 16,
+  }),
+  light: L.tileLayer('https://server.arcgisonline.com/ArcGIS/rest/services/Canvas/World_Light_Gray_Base/MapServer/tile/{z}/{y}/{x}', {
+    attribution: 'Tiles &copy; Esri', maxZoom: 16,
+  }),
+  satellite: L.tileLayer('https://server.arcgisonline.com/ArcGIS/rest/services/World_Imagery/MapServer/tile/{z}/{y}/{x}', {
+    attribution: 'Tiles &copy; Esri', maxZoom: 19,
+  }),
+};
+
+let activeMapLayer = mapLayers.dark.addTo(map);
+
+function setMapStyle(style) {
+  if (!mapLayers[style] || activeMapLayer === mapLayers[style]) return;
+  map.removeLayer(activeMapLayer);
+  activeMapLayer = mapLayers[style].addTo(map);
+  activeMapLayer.bringToBack();
+  document.querySelectorAll('.map-style-btn').forEach(button => {
+    button.classList.toggle('active', button.dataset.style === style);
+  });
+}
 
 // Click background to deselect
 map.on('click', () => {
@@ -907,8 +1156,9 @@ function buildPopup(job) {
       </div>
       <div class="popup-row">
         <svg width="12" height="12" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M21 10c0 7-9 13-9 13s-9-6-9-13a9 9 0 0 1 18 0z"/><circle cx="12" cy="10" r="3"/></svg>
-        ${job.city} · ${job.type}${job.remote ? ' · <span style="color:var(--accent);">Remote OK</span>' : ''}
+        ${job.location} · ${job.type} · <span style="color:var(--accent);">${job.workMode}</span>
       </div>
+      <div class="popup-row">${job.industry} · ${job.source}</div>
       <div class="popup-salary" style="color:${TIER_COLOR[job.tier]};">${job.salary}</div>
       <div class="popup-tags">${tags}</div>
       <div class="popup-actions">
@@ -955,14 +1205,18 @@ function getFiltered() {
   const city     = document.getElementById('cityFilter').value;
   const type     = document.getElementById('typeFilter').value;
   const sortBy   = document.getElementById('sortSelect').value;
+  const industry = document.getElementById('industryFilter').value;
 
   let jobs = JOBS.filter(j => {
-    if (city !== 'all' && j.city !== city) return false;
+    if (activeJobsView === 'saved' && !savedJobIds.has(j.id)) return false;
+    if (industry !== 'all' && j.industry !== industry) return false;
+    if (city !== 'all' && j.state !== city) return false;
     if (type !== 'all' && j.type !== type) return false;
     if (activeChip === 'remote' && !j.remote) return false;
+    if (activeChip === 'hybrid' && j.workMode !== 'hybrid') return false;
     if (activeChip === 'internship' && j.type !== 'internship') return false;
-    if (!['all','remote','internship'].includes(activeChip) && !j.tags.includes(activeChip)) return false;
-    if (search && !j.title.toLowerCase().includes(search) && !j.company.toLowerCase().includes(search) && !j.tags.join(' ').includes(search)) return false;
+    if (!['all','remote','hybrid','internship'].includes(activeChip) && !j.tags.includes(activeChip)) return false;
+    if (search && !j.title.toLowerCase().includes(search) && !j.company.toLowerCase().includes(search) && !j.tags.join(' ').includes(search) && !j.industry.toLowerCase().includes(search)) return false;
     return true;
   });
 
@@ -978,6 +1232,8 @@ function getFiltered() {
 // ═══════════════════════════════════════════════
 function render() {
   const jobs = getFiltered();
+
+  document.getElementById('saved-count').textContent = savedJobIds.size;
 
   // Count badge
   document.getElementById('countBadge').textContent = `${jobs.length} job${jobs.length !== 1 ? 's' : ''}`;
@@ -995,13 +1251,19 @@ function render() {
   if (jobs.length === 0) {
     list.innerHTML = '';
     none.style.display = 'block';
+    document.getElementById('no-results-title').textContent = activeJobsView === 'saved'
+      ? 'No saved jobs yet.'
+      : 'No jobs match your filters.';
+    document.getElementById('no-results-help').textContent = activeJobsView === 'saved'
+      ? 'Save a job from its map popup or detail view.'
+      : 'Try adjusting your search.';
     addMarkers([]);
     return;
   }
 
   none.style.display = 'none';
   list.innerHTML = jobs.map((j, i) => {
-    const tags = [j.type, ...(j.remote ? ['remote'] : []), ...j.tags.slice(0, 2)]
+    const tags = [j.type, j.workMode, ...j.tags.slice(0, 2)]
       .slice(0, 4)
       .map(t => `<span class="tag" style="background:${t === j.type ? j.color+'18' : 'var(--surface3)'};color:${t === j.type ? j.color : 'var(--text3)'};">${t}</span>`)
       .join('');
@@ -1015,7 +1277,7 @@ function render() {
           <div class="company-logo" style="background:${j.color}18;color:${j.color};">${j.logo}</div>
           <div class="card-meta">
             <div class="card-title">${j.title}</div>
-            <div class="card-sub">${j.company} &middot; ${j.city}</div>
+            <div class="card-sub">${j.company} &middot; ${j.location} &middot; ${j.industry}</div>
           </div>
           <div class="card-right">
             <div class="card-salary" style="color:${TIER_COLOR[j.tier]};">${j.salary}</div>
@@ -1099,12 +1361,16 @@ function openDetail(id) {
   document.getElementById('panelLogo').style.cssText    = `background:${job.color}18;color:${job.color};width:52px;height:52px;border-radius:10px;display:flex;align-items:center;justify-content:center;font-family:var(--font-display);font-weight:700;font-size:20px;flex-shrink:0;`;
   document.getElementById('panelLogo').textContent      = job.logo;
   document.getElementById('panelTitle').textContent     = job.title;
-  document.getElementById('panelCompany').textContent   = `${job.company} · ${job.city}`;
+  document.getElementById('panelCompany').textContent   = `${job.company} · ${job.location} · ${job.industry}`;
 
   const infoItems = [
     { icon: `<svg width="13" height="13" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><rect x="2" y="7" width="20" height="14" rx="2"/><path d="M16 7V5a2 2 0 0 0-2-2h-4a2 2 0 0 0-2 2v2"/></svg>`, label: job.type },
+    { icon: `<svg width="13" height="13" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M3 21h18M5 21V7l7-4 7 4v14M9 10h6M9 14h6"/></svg>`, label: job.industry },
+    { icon: `<svg width="13" height="13" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M4 4h16v16H4z"/><path d="M8 8h8M8 12h8M8 16h5"/></svg>`, label: `Source: ${job.source}` },
+    { icon: `<svg width="13" height="13" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M3 11l9-8 9 8"/><path d="M5 10v10h14V10"/></svg>`, label: `Work mode: ${job.workMode}`, color: job.workMode === 'hybrid' ? '#7c6fff' : undefined },
     { icon: `<svg width="13" height="13" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><line x1="12" y1="1" x2="12" y2="23"/><path d="M17 5H9.5a3.5 3.5 0 0 0 0 7h5a3.5 3.5 0 0 1 0 7H6"/></svg>`, label: job.salary, color: TIER_COLOR[job.tier] },
-    { icon: `<svg width="13" height="13" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><circle cx="12" cy="12" r="10"/><polyline points="12 6 12 12 16 14"/></svg>`, label: `Posted ${job.posted === 1 ? 'today' : job.posted + 'd ago'}` },
+    { icon: `<svg width="13" height="13" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><circle cx="12" cy="12" r="10"/><polyline points="12 6 12 12 16 14"/></svg>`, label: `Posted: ${job.posted === 1 ? 'Today' : job.posted + ' days ago'}` },
+    { icon: `<svg width="13" height="13" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><rect x="3" y="4" width="18" height="17" rx="2"/><line x1="8" y1="2" x2="8" y2="6"/><line x1="16" y1="2" x2="16" y2="6"/><line x1="3" y1="10" x2="21" y2="10"/></svg>`, label: `Application deadline: ${job.deadline || 'N/A'}`, color: job.deadline ? '#ffb340' : undefined },
     ...(job.remote ? [{ icon: `<svg width="13" height="13" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><rect x="2" y="3" width="20" height="14" rx="2"/><line x1="8" y1="21" x2="16" y2="21"/><line x1="12" y1="17" x2="12" y2="21"/></svg>`, label: 'Remote OK', color: '#7c6fff' }] : []),
   ];
 
@@ -1114,6 +1380,8 @@ function openDetail(id) {
 
   document.getElementById('panelDesc').textContent = job.desc;
   document.getElementById('panelReqs').textContent = job.reqs;
+  const saveButton = document.querySelector('#detail-panel .panel-btn.secondary');
+  saveButton.textContent = savedJobIds.has(job.id) ? 'Remove saved job' : 'Save job';
 
   const panel = document.getElementById('detail-panel');
   panel.style.display = 'block';
@@ -1140,7 +1408,22 @@ function applyNow(id) {
 function saveJob(id) {
   const jobId = id || window._currentPanelJob;
   const job = JOBS.find(j => j.id === jobId);
-  showToast(job ? `"${job.title}" saved to your list!` : 'Job saved!', '#22d67a');
+  if (!job) return;
+
+  if (savedJobIds.has(jobId)) {
+    savedJobIds.delete(jobId);
+    showToast(`"${job.title}" removed from saved jobs.`, '#ffb340');
+  } else {
+    savedJobIds.add(jobId);
+    showToast(`"${job.title}" saved to your list!`, '#22d67a');
+  }
+
+  localStorage.setItem('mapwork-saved-jobs', JSON.stringify([...savedJobIds]));
+  const saveButton = document.querySelector('#detail-panel .panel-btn.secondary');
+  if (saveButton && window._currentPanelJob === jobId) {
+    saveButton.textContent = savedJobIds.has(jobId) ? 'Remove saved job' : 'Save job';
+  }
+  render();
 }
 
 function showToast(msg, dotColor) {
@@ -1151,9 +1434,44 @@ function showToast(msg, dotColor) {
   setTimeout(() => toast.classList.remove('show'), 2800);
 }
 
+function toggleHeaderMenu(menuId, button) {
+  const target = document.getElementById(menuId);
+  const willOpen = !target.classList.contains('open');
+  document.querySelectorAll('.header-menu').forEach(menu => menu.classList.remove('open'));
+  document.querySelectorAll('.header-icon-btn').forEach(btn => btn.classList.remove('active'));
+  if (willOpen) {
+    target.classList.add('open');
+    button.classList.add('active');
+  }
+}
+
+function menuAction(label) {
+  document.querySelectorAll('.header-menu').forEach(menu => menu.classList.remove('open'));
+  document.querySelectorAll('.header-icon-btn').forEach(btn => btn.classList.remove('active'));
+  showToast(`${label} selected.`, '#7c6fff');
+}
+
+document.addEventListener('click', event => {
+  if (!event.target.closest('.header-action-wrap')) {
+    document.querySelectorAll('.header-menu').forEach(menu => menu.classList.remove('open'));
+    document.querySelectorAll('.header-icon-btn').forEach(btn => btn.classList.remove('active'));
+  }
+});
+
 // ═══════════════════════════════════════════════
 //  CHIP FILTER
 // ═══════════════════════════════════════════════
+function setJobsView(view) {
+  activeJobsView = view;
+  document.querySelectorAll('.jobs-tab').forEach(tab => {
+    const active = tab.dataset.view === view;
+    tab.classList.toggle('active', active);
+    tab.setAttribute('aria-selected', active);
+  });
+  deselect();
+  render();
+}
+
 function setChip(el, tag) {
   activeChip = tag;
   document.querySelectorAll('.chip').forEach(c => c.classList.remove('active'));
@@ -1166,9 +1484,10 @@ function setChip(el, tag) {
 // ═══════════════════════════════════════════════
 document.getElementById('searchInput').addEventListener('input', render);
 document.getElementById('cityFilter').addEventListener('change', () => {
-  const city = document.getElementById('cityFilter').value;
-  if (city !== 'all' && CITY_COORDS[city]) {
-    map.flyTo(CITY_COORDS[city], 10, { duration: 1 });
+  const state = document.getElementById('cityFilter').value;
+  const capital = STATE_CAPITALS.find(([abbr]) => abbr === state);
+  if (state !== 'all' && capital) {
+    map.flyTo([capital[2], capital[3]], 9, { duration: 1 });
   } else {
     map.flyTo([38.5, -96], 4, { duration: 1 });
   }
@@ -1183,3 +1502,4 @@ render();
 </script>
 </body>
 </html>
+
